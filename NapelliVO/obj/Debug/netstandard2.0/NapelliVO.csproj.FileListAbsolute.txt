@@ -1,0 +1,9 @@
+C:\NapelliProject\Build\netstandard2.0\NapelliVO.deps.json
+C:\NapelliProject\Build\netstandard2.0\NapelliVO.dll
+C:\NapelliProject\Build\netstandard2.0\NapelliVO.pdb
+C:\NapelliProject\NapelliFrameWorkProject\NapelliVO\obj\Debug\netstandard2.0\NapelliVO.csprojAssemblyReference.cache
+C:\NapelliProject\NapelliFrameWorkProject\NapelliVO\obj\Debug\netstandard2.0\NapelliVO.AssemblyInfoInputs.cache
+C:\NapelliProject\NapelliFrameWorkProject\NapelliVO\obj\Debug\netstandard2.0\NapelliVO.AssemblyInfo.cs
+C:\NapelliProject\NapelliFrameWorkProject\NapelliVO\obj\Debug\netstandard2.0\NapelliVO.csproj.CoreCompileInputs.cache
+C:\NapelliProject\NapelliFrameWorkProject\NapelliVO\obj\Debug\netstandard2.0\NapelliVO.dll
+C:\NapelliProject\NapelliFrameWorkProject\NapelliVO\obj\Debug\netstandard2.0\NapelliVO.pdb
