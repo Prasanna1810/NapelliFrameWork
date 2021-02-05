@@ -21,10 +21,39 @@ namespace NapelliServerFrameWork
             {
                 Conn.Open();
 
-                string query = "select user_name, password from user_register where user_name = @uname and password = @pwd";
+                string query = "select email_id from user_register where email_id = @email and password = @pwd";
                 MySqlCommand cmd = new MySqlCommand(query, Conn);
-                cmd.Parameters.AddWithValue("@uname", urVO.UserName);
+                cmd.Parameters.AddWithValue("@email", urVO.Email_id);
                 cmd.Parameters.AddWithValue("@pwd", urVO.Password);
+                MySqlDataReader reader = cmd.ExecuteReader();
+                DataTable dt = new DataTable();
+
+                dt.Load(reader);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                status.errcode = 1;
+                status.errmesg = ex.Message;
+                status.rowcount = -1;
+                return null;
+            }
+            finally
+            {
+                Conn.Close();
+            }
+        }
+        public DataTable CheckMail(string Email_id, string Mobile_number)
+        {
+            MySqlConnection Conn = Connection.GetConnection();
+            try
+            {
+                Conn.Open();
+
+                string query = "select email_id, mobile_number from user_register where email_id = @email and mobile_number = @mnum";
+                MySqlCommand cmd = new MySqlCommand(query, Conn);
+                cmd.Parameters.AddWithValue("@email", Email_id);
+                cmd.Parameters.AddWithValue("@mnum", Mobile_number);
                 MySqlDataReader reader = cmd.ExecuteReader();
                 DataTable dt = new DataTable();
 
@@ -49,15 +78,12 @@ namespace NapelliServerFrameWork
             try
             {
                 Conn.Open();
-                string query = "insert into user_register(user_name, email_id, password, confirm_password, mobile_number, state, city, accept_t_c) values(@fname, @email, @pwd, @conpwd, @mobile, @state, @city,@tc)";
+                string query = "insert into user_register(user_name, email_id, password, mobile_number, accept_t_c) values(@uname, @email, @pwd, @mobile, @tc)";
                 MySqlCommand cmd = new MySqlCommand(query, Conn);
-                cmd.Parameters.AddWithValue("@fname", userVO.UserName);
+                cmd.Parameters.AddWithValue("@uname", userVO.UserName);
                 cmd.Parameters.AddWithValue("@email", userVO.Email_id);
                 cmd.Parameters.AddWithValue("@pwd", userVO.Password);
-                cmd.Parameters.AddWithValue("@conpwd", userVO.Confirm_pwd);
                 cmd.Parameters.AddWithValue("@mobile", userVO.Mobile_number);
-                cmd.Parameters.AddWithValue("@state", userVO.State);
-                cmd.Parameters.AddWithValue("@city", userVO.City);
                 cmd.Parameters.AddWithValue("@tc", userVO.Accept_TC);
                 Int32 row = cmd.ExecuteNonQuery();
                 if (row > 0)
@@ -83,8 +109,9 @@ namespace NapelliServerFrameWork
             try
             {
                 Conn.Open();
-                string query = "insert into family_details(father_name, mother_name, brother, sister, family_type) values(@fname, @mname, @bro, @sis, @ftype)";
+                string query = "insert into family_details(user_id, father_name, mother_name, brother, sister, family_type) values(@uid, @fname, @mname, @bro, @sis, @ftype)";
                 MySqlCommand cmd = new MySqlCommand(query, Conn);
+                cmd.Parameters.AddWithValue("@uid", famVO.UserId);
                 cmd.Parameters.AddWithValue("@fname", famVO.FatherName);
                 cmd.Parameters.AddWithValue("@mname", famVO.MotherName);
                 cmd.Parameters.AddWithValue("@bro", famVO.Brother);
@@ -114,8 +141,9 @@ namespace NapelliServerFrameWork
             try
             {
                 Conn.Open();
-                string query = "insert into professional_details(employee_type, designation, company_name, salary_annum, income) values(@etype, @deg, @cname, @sal, @inc)";
+                string query = "insert into professional_details(user_id, employee_type, designation, company_name, salary_annum, income) values(@uid, @etype, @deg, @cname, @sal, @inc)";
                 MySqlCommand cmd = new MySqlCommand(query, Conn);
+                cmd.Parameters.AddWithValue("@uid", proVO.UserId);
                 cmd.Parameters.AddWithValue("@etype", proVO.EmployeeType);
                 cmd.Parameters.AddWithValue("@deg", proVO.Designation);
                 cmd.Parameters.AddWithValue("@cname", proVO.CompanyName);
@@ -146,9 +174,10 @@ namespace NapelliServerFrameWork
             {
                 Conn.Open();
                 string query = "insert into partner_preference" +
-                    "(job_type, qualification_id, age_from, age_to, height_from, height_to, family_type, country_id, physical_status, state_id, requirements, city_id, complexion) " +
-                    "values(@ejtype, @qua, @agef, @aget, @hitf, @hitto, @ftype, @counid, @phys, @sid, @req, @city, @com)";
+                    "(user_id, job_type, qualification_id, age_from, age_to, height_from, height_to, family_type, country_id, physical_status, state_id, requirements, city_id, complexion) " +
+                    "values(@uid, @ejtype, @qua, @agef, @aget, @hitf, @hitto, @ftype, @counid, @phys, @sid, @req, @city, @com)";
                 MySqlCommand cmd = new MySqlCommand(query, Conn);
+                cmd.Parameters.AddWithValue("@uid", parVO.UserId);
                 cmd.Parameters.AddWithValue("@ejtype", parVO.JobType);
                 cmd.Parameters.AddWithValue("@qua", parVO.QualificationId);
                 cmd.Parameters.AddWithValue("@agef", parVO.AgeForm);
@@ -186,9 +215,10 @@ namespace NapelliServerFrameWork
             try
             {
                 Conn.Open();
-                string query = "insert into personal_edu_details(sur_name, full_name, email_id, mobile_number, gender, date_birth, place_birth, birth_time, birth_name, marital_status, height, star, padam, rasi, caste_id, city, physical_status, mother_tongue, country, state, complexion, paternal_gotram, maternal_gotram, higher_education, sub_cast_id, religion, qualification, college) " +
-                    "values(@sname, @fname, @email, @mnum, @gen, @dob, @pob, @bt, @bn, @ms, @hit, @star, @pad, @rasi, @cid, @city, @pgy, @mtou, @con, @sta, @com, @pg, @mg, @hedu, @scid, @reg, @qua, @col)";
+                string query = "insert into personal_edu_details(user_id, sur_name, full_name, email_id, mobile_number, gender, date_birth, place_birth, birth_time, birth_name, marital_status, height, star, padam, rasi, caste_id, city, physical_status, mother_tongue, country, state, complexion, paternal_gotram, maternal_gotram, higher_education, sub_cast_id, religion, qualification, college) " +
+                    "values(@uid, @sname, @fname, @email, @mnum, @gen, @dob, @pob, @bt, @bn, @ms, @hit, @star, @pad, @rasi, @cid, @city, @pgy, @mtou, @con, @sta, @com, @pg, @mg, @hedu, @scid, @reg, @qua, @col)";
                 MySqlCommand cmd = new MySqlCommand(query, Conn);
+                cmd.Parameters.AddWithValue("@uid", perEduVO.UserId);
                 cmd.Parameters.AddWithValue("@sname", perEduVO.SurName);
                 cmd.Parameters.AddWithValue("@fname", perEduVO.FullName);
                 cmd.Parameters.AddWithValue("@email", perEduVO.Email_id);

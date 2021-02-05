@@ -6,6 +6,7 @@ namespace NapelliVO
 {
     public class PartnerPrefVO
     {
+        public int UserId { get; set; }
         public string JobType { get; set; }
         public int QualificationId { get; set; }
         public int AgeForm { get; set; }

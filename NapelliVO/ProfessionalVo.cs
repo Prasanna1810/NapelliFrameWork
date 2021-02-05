@@ -6,6 +6,7 @@ namespace NapelliVO
 {
     public class ProfessionalVo
     {
+        public int UserId { get; set; }
         public string EmployeeType { get; set; }
         public string Designation { get; set; }
         public string CompanyName { get; set; }

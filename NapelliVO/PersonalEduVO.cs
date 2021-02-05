@@ -6,6 +6,7 @@ namespace NapelliVO
 {
     public class PersonalEduVO
     {
+        public int UserId { get; set; }
         public string SurName { get; set; }
         public string FullName { get; set; }
         public string Email_id { get; set; }

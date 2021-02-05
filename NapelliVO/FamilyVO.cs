@@ -6,6 +6,7 @@ namespace NapelliVO
 {
     public class FamilyVO
     {
+        public int UserId { get; set; }
         public String FatherName { get; set; }
         public string MotherName { get; set; }
         public int Brother { get; set; }
