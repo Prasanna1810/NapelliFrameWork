@@ -13,6 +13,7 @@ namespace NapelliVO
         public string Mobile_number { get; set; }
         public string Gender { get; set; }
         public string DateOfBirth { get; set; }
+        public int Age { get; set; }
         public string PlaceOfBirth { get; set; }
         public int SubCastId { get; set; }
         public string BirthTime { get; set; }
@@ -35,6 +36,7 @@ namespace NapelliVO
         public int Religion { get; set; }
         public int Qualification { get; set; }
         public string College { get; set; }
-
+        public int PackageId { get; set; }
+        public string CuponCode { get; set; }
     }
 }

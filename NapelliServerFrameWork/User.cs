@@ -216,7 +216,7 @@ namespace NapelliServerFrameWork
             {
                 Conn.Open();
                 string query = "insert into personal_edu_details(user_id, sur_name, full_name, email_id, mobile_number, gender, date_birth, place_birth, birth_time, birth_name, marital_status, height, star, padam, rasi, caste_id, city, physical_status, mother_tongue, country, state, complexion, paternal_gotram, maternal_gotram, higher_education, sub_cast_id, religion, qualification, college) " +
-                    "values(@uid, @sname, @fname, @email, @mnum, @gen, @dob, @pob, @bt, @bn, @ms, @hit, @star, @pad, @rasi, @cid, @city, @pgy, @mtou, @con, @sta, @com, @pg, @mg, @hedu, @scid, @reg, @qua, @col)";
+                    "values(@uid, @sname, @fname, @email, @mnum, @gen, @dob, @age, @pob, @bt, @bn, @ms, @hit, @star, @pad, @rasi, @cid, @city, @pgy, @mtou, @con, @sta, @com, @pg, @mg, @hedu, @scid, @reg, @qua, @col)";
                 MySqlCommand cmd = new MySqlCommand(query, Conn);
                 cmd.Parameters.AddWithValue("@uid", perEduVO.UserId);
                 cmd.Parameters.AddWithValue("@sname", perEduVO.SurName);
@@ -225,6 +225,7 @@ namespace NapelliServerFrameWork
                 cmd.Parameters.AddWithValue("@mnum", perEduVO.Mobile_number);
                 cmd.Parameters.AddWithValue("@gen", perEduVO.Gender);
                 cmd.Parameters.AddWithValue("@dob", perEduVO.DateOfBirth);
+                cmd.Parameters.AddWithValue("@age", perEduVO.Age);
                 cmd.Parameters.AddWithValue("@pob", perEduVO.PlaceOfBirth);
                 cmd.Parameters.AddWithValue("@bt", perEduVO.BirthTime);
                 cmd.Parameters.AddWithValue("@bn", perEduVO.BirthName);
@@ -247,6 +248,35 @@ namespace NapelliServerFrameWork
                 cmd.Parameters.AddWithValue("@reg", perEduVO.Religion);
                 cmd.Parameters.AddWithValue("@qua", perEduVO.Qualification);
                 cmd.Parameters.AddWithValue("@col", perEduVO.College);
+                Int32 row = cmd.ExecuteNonQuery();
+                if (row > 0)
+                    return "Inserted";
+                else
+                    return "Not Inserted";
+            }
+            catch (Exception ex)
+            {
+                status.errcode = 1;
+                status.errmesg = ex.Message;
+                status.rowcount = -1;
+                return null;
+            }
+            finally
+            {
+                Conn.Close();
+            }
+        }
+        public string PackageCupons(PersonalEduVO perEduVO)
+        {
+            MySqlConnection Conn = Connection.GetConnection();
+            try
+            {
+                Conn.Open();
+                string query = "insert into package_cupons(user_id, package_id, cupon_code)values(@uid, @pac, @cup)";
+                MySqlCommand cmd = new MySqlCommand(query, Conn);
+                cmd.Parameters.AddWithValue("@uid", perEduVO.UserId);
+                cmd.Parameters.AddWithValue("@pac", perEduVO.PackageId);
+                cmd.Parameters.AddWithValue("@cup", perEduVO.CuponCode);
                 Int32 row = cmd.ExecuteNonQuery();
                 if (row > 0)
                     return "Inserted";
@@ -544,6 +574,37 @@ namespace NapelliServerFrameWork
 
                 string query = "select * from master_sub_caste";
                 MySqlCommand cmd = new MySqlCommand(query, Conn);
+                MySqlDataReader reader = cmd.ExecuteReader();
+                DataTable dt = new DataTable();
+
+                dt.Load(reader);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                status.errcode = 1;
+                status.errmesg = ex.Message;
+                status.rowcount = -1;
+                return null;
+            }
+            finally
+            {
+                Conn.Close();
+            }
+        }
+        public DataTable GeneralSearch(string gender, int age_from, int age_to, int religion)
+        {
+            MySqlConnection Conn = Connection.GetConnection();
+            try
+            {
+                Conn.Open();
+
+                string query = "select user_id, age, mq.quali_name from personal_edu_details ped Inner join master_qualification mq on ped.qualification = mq.quli_id where gender = @gen and age between @agef and @aget and religion = @relig";
+                MySqlCommand cmd = new MySqlCommand(query, Conn);
+                cmd.Parameters.AddWithValue("@gen", gender);
+                cmd.Parameters.AddWithValue("@agef", age_from);
+                cmd.Parameters.AddWithValue("@aget", age_to);
+                cmd.Parameters.AddWithValue("@relig", religion);
                 MySqlDataReader reader = cmd.ExecuteReader();
                 DataTable dt = new DataTable();
 
