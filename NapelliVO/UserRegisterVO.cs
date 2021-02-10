@@ -12,6 +12,6 @@ namespace NapelliVO
         public string Mobile_number { get; set; }
         public string State { get; set; }
         public string City { get; set; }
-        public string Accept_TC { get; set; }
+        public string ProfileFor { get; set; }
     }
 }

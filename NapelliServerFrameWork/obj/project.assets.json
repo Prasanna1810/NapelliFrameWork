@@ -257,29 +257,6 @@
             "rid": "win"
           }
         }
-      },
-      "NapelliFrameWork/1.0.0": {
-        "type": "project",
-        "framework": ".NETStandard,Version=v2.0",
-        "dependencies": {
-          "MySql.Data": "8.0.23"
-        },
-        "compile": {
-          "bin/placeholder/NapelliFrameWork.dll": {}
-        },
-        "runtime": {
-          "bin/placeholder/NapelliFrameWork.dll": {}
-        }
-      },
-      "NapelliVO/1.0.0": {
-        "type": "project",
-        "framework": ".NETStandard,Version=v2.0",
-        "compile": {
-          "bin/placeholder/NapelliVO.dll": {}
-        },
-        "runtime": {
-          "bin/placeholder/NapelliVO.dll": {}
-        }
       }
     }
   },
@@ -981,24 +958,12 @@
         "useSharedDesignerContext.txt",
         "version.txt"
       ]
-    },
-    "NapelliFrameWork/1.0.0": {
-      "type": "project",
-      "path": "../NapelliFrameWork/NapelliFrameWork.csproj",
-      "msbuildProject": "../NapelliFrameWork/NapelliFrameWork.csproj"
-    },
-    "NapelliVO/1.0.0": {
-      "type": "project",
-      "path": "../NapelliVO/NapelliVO.csproj",
-      "msbuildProject": "../NapelliVO/NapelliVO.csproj"
     }
   },
   "projectFileDependencyGroups": {
     ".NETStandard,Version=v2.0": [
       "MySql.Data >= 8.0.23",
-      "NETStandard.Library >= 2.0.3",
-      "NapelliFrameWork >= 1.0.0",
-      "NapelliVO >= 1.0.0"
+      "NETStandard.Library >= 2.0.3"
     ]
   },
   "packageFolders": {
@@ -1026,14 +991,7 @@
       },
       "frameworks": {
         "netstandard2.0": {
-          "projectReferences": {
-            "C:\\NapelliProject\\NapelliFrameWorkProject\\NapelliFrameWork\\NapelliFrameWork.csproj": {
-              "projectPath": "C:\\NapelliProject\\NapelliFrameWorkProject\\NapelliFrameWork\\NapelliFrameWork.csproj"
-            },
-            "C:\\NapelliProject\\NapelliFrameWorkProject\\NapelliVO\\NapelliVO.csproj": {
-              "projectPath": "C:\\NapelliProject\\NapelliFrameWorkProject\\NapelliVO\\NapelliVO.csproj"
-            }
-          }
+          "projectReferences": {}
         }
       },
       "warningProperties": {

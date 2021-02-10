@@ -50,7 +50,7 @@ namespace NapelliServerFrameWork
             {
                 Conn.Open();
 
-                string query = "select email_id, mobile_number from user_register where email_id = @email and mobile_number = @mnum";
+                string query = "select email_id, mobile_number from user_register where email_id = @email or mobile_number = @mnum";
                 MySqlCommand cmd = new MySqlCommand(query, Conn);
                 cmd.Parameters.AddWithValue("@email", Email_id);
                 cmd.Parameters.AddWithValue("@mnum", Mobile_number);
@@ -78,13 +78,13 @@ namespace NapelliServerFrameWork
             try
             {
                 Conn.Open();
-                string query = "insert into user_register(user_name, email_id, password, mobile_number, accept_t_c) values(@uname, @email, @pwd, @mobile, @tc)";
+                string query = "insert into user_register(user_name, email_id, password, mobile_number, profile_for) values(@uname, @email, @pwd, @mobile, @pfor)";
                 MySqlCommand cmd = new MySqlCommand(query, Conn);
                 cmd.Parameters.AddWithValue("@uname", userVO.UserName);
                 cmd.Parameters.AddWithValue("@email", userVO.Email_id);
                 cmd.Parameters.AddWithValue("@pwd", userVO.Password);
                 cmd.Parameters.AddWithValue("@mobile", userVO.Mobile_number);
-                cmd.Parameters.AddWithValue("@tc", userVO.Accept_TC);
+                cmd.Parameters.AddWithValue("@pfor", userVO.ProfileFor);
                 Int32 row = cmd.ExecuteNonQuery();
                 if (row > 0)
                     return "Inserted";
@@ -266,17 +266,51 @@ namespace NapelliServerFrameWork
                 Conn.Close();
             }
         }
-        public string PackageCupons(PersonalEduVO perEduVO)
+        public DataTable PackageCupons(int user_id, int package_id, string cupon_code)
         {
             MySqlConnection Conn = Connection.GetConnection();
             try
             {
                 Conn.Open();
-                string query = "insert into package_cupons(user_id, package_id, cupon_code)values(@uid, @pac, @cup)";
+                string query = "package_cupon";
                 MySqlCommand cmd = new MySqlCommand(query, Conn);
-                cmd.Parameters.AddWithValue("@uid", perEduVO.UserId);
-                cmd.Parameters.AddWithValue("@pac", perEduVO.PackageId);
-                cmd.Parameters.AddWithValue("@cup", perEduVO.CuponCode);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@user_id", user_id);
+                cmd.Parameters.AddWithValue("@package_id", package_id);
+                cmd.Parameters.AddWithValue("@cupon_code", cupon_code);
+                MySqlDataReader reader = cmd.ExecuteReader();
+                DataTable dt = new DataTable();
+
+                dt.Load(reader);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                status.errcode = 1;
+                status.errmesg = ex.Message;
+                status.rowcount = -1;
+                return null;
+            }
+            finally
+            {
+                Conn.Close();
+            }
+        }
+        public string InsertImage(ImageVO iVO)
+        {
+            MySqlConnection Conn = Connection.GetConnection();
+            try
+            {
+                Conn.Open();
+                string query = "insert into image(user_id, name, image1, image2, image3, image4, image5) values(@uid, @name, @img1, @img2, @img3, @img4, @img5)";
+                MySqlCommand cmd = new MySqlCommand(query, Conn);
+                cmd.Parameters.AddWithValue("@uid", iVO.UserId);
+                cmd.Parameters.AddWithValue("@name", iVO.Name);
+                cmd.Parameters.AddWithValue("@img1", iVO.Image1);
+                cmd.Parameters.AddWithValue("@img2", iVO.Image2);
+                cmd.Parameters.AddWithValue("@img3", iVO.Image3);
+                cmd.Parameters.AddWithValue("@img4", iVO.Image4);
+                cmd.Parameters.AddWithValue("@img5", iVO.Image5);
                 Int32 row = cmd.ExecuteNonQuery();
                 if (row > 0)
                     return "Inserted";
@@ -623,5 +657,6 @@ namespace NapelliServerFrameWork
                 Conn.Close();
             }
         }
+
     }
 }

@@ -13,8 +13,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\NapelliFrameWork\NapelliFrameWork.csproj" />
-    <ProjectReference Include="..\NapelliVO\NapelliVO.csproj" />
+    <Reference Include="NapelliFrameWork">
+      <HintPath>..\..\Build\netstandard2.0\NapelliFrameWork.dll</HintPath>
+    </Reference>
+    <Reference Include="NapelliVO">
+      <HintPath>..\..\Build\netstandard2.0\NapelliVO.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>
