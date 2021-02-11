@@ -5,7 +5,8 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <OutputPath>C:\NapelliProject\Build\</OutputPath>
+    <OutputPath>D:\VSCode\Build\</OutputPath>
+    <WarningLevel>5</WarningLevel>
   </PropertyGroup>
 
 </Project>

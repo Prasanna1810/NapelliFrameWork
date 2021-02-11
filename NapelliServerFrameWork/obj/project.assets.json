@@ -967,19 +967,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\win10-one\\.nuget\\packages\\": {}
+    "C:\\Users\\thiru\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\NapelliProject\\NapelliFrameWorkProject\\NapelliServerFrameWork\\NapelliServerFrameWork.csproj",
+      "projectUniqueName": "D:\\VSCode\\NapelliFrameWork\\NapelliServerFrameWork\\NapelliServerFrameWork.csproj",
       "projectName": "NapelliServerFrameWork",
-      "projectPath": "C:\\NapelliProject\\NapelliFrameWorkProject\\NapelliServerFrameWork\\NapelliServerFrameWork.csproj",
-      "packagesPath": "C:\\Users\\win10-one\\.nuget\\packages\\",
-      "outputPath": "C:\\NapelliProject\\NapelliFrameWorkProject\\NapelliServerFrameWork\\obj\\",
+      "projectPath": "D:\\VSCode\\NapelliFrameWork\\NapelliServerFrameWork\\NapelliServerFrameWork.csproj",
+      "packagesPath": "C:\\Users\\thiru\\.nuget\\packages\\",
+      "outputPath": "D:\\VSCode\\NapelliFrameWork\\NapelliServerFrameWork\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\win10-one\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\thiru\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -991,6 +991,7 @@
       },
       "frameworks": {
         "netstandard2.0": {
+          "targetAlias": "netstandard2.0",
           "projectReferences": {}
         }
       },
@@ -1002,6 +1003,7 @@
     },
     "frameworks": {
       "netstandard2.0": {
+        "targetAlias": "netstandard2.0",
         "dependencies": {
           "MySql.Data": {
             "target": "Package",
@@ -1024,7 +1026,7 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.301\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.103\\RuntimeIdentifierGraph.json"
       }
     }
   }

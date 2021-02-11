@@ -9,8 +9,6 @@ namespace NapelliVO
         public int UserId { get; set; }
         public string SurName { get; set; }
         public string FullName { get; set; }
-        public string Email_id { get; set; }
-        public string Mobile_number { get; set; }
         public string Gender { get; set; }
         public string DateOfBirth { get; set; }
         public int Age { get; set; }
@@ -19,7 +17,7 @@ namespace NapelliVO
         public string BirthTime { get; set; }
         public string BirthName { get; set; }
         public string MaritalStatus { get; set; }
-        public int Height { get; set; }
+        public float Height { get; set; }
         public int Star { get; set; }
         public string Padam { get; set; }
         public int Rasi { get; set; }
@@ -36,7 +34,5 @@ namespace NapelliVO
         public int Religion { get; set; }
         public int Qualification { get; set; }
         public string College { get; set; }
-        public int PackageId { get; set; }
-        public string CuponCode { get; set; }
     }
 }

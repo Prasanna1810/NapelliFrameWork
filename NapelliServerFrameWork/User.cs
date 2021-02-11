@@ -215,14 +215,12 @@ namespace NapelliServerFrameWork
             try
             {
                 Conn.Open();
-                string query = "insert into personal_edu_details(user_id, sur_name, full_name, email_id, mobile_number, gender, date_birth, place_birth, birth_time, birth_name, marital_status, height, star, padam, rasi, caste_id, city, physical_status, mother_tongue, country, state, complexion, paternal_gotram, maternal_gotram, higher_education, sub_cast_id, religion, qualification, college) " +
-                    "values(@uid, @sname, @fname, @email, @mnum, @gen, @dob, @age, @pob, @bt, @bn, @ms, @hit, @star, @pad, @rasi, @cid, @city, @pgy, @mtou, @con, @sta, @com, @pg, @mg, @hedu, @scid, @reg, @qua, @col)";
+                string query = "insert into personal_edu_details(user_id, sur_name, full_name, gender, date_birth, place_birth, birth_time, birth_name, marital_status, height, star, padam, rasi, caste_id, city, physical_status, mother_tongue, country, state, complexion, paternal_gotram, maternal_gotram, higher_education, sub_cast_id, religion, qualification, college) " +
+                    "values(@uid, @sname, @fname, @gen, @dob, @age, @pob, @bt, @bn, @ms, @hit, @star, @pad, @rasi, @cid, @city, @pgy, @mtou, @con, @sta, @com, @pg, @mg, @hedu, @scid, @reg, @qua, @col)";
                 MySqlCommand cmd = new MySqlCommand(query, Conn);
                 cmd.Parameters.AddWithValue("@uid", perEduVO.UserId);
                 cmd.Parameters.AddWithValue("@sname", perEduVO.SurName);
                 cmd.Parameters.AddWithValue("@fname", perEduVO.FullName);
-                cmd.Parameters.AddWithValue("@email", perEduVO.Email_id);
-                cmd.Parameters.AddWithValue("@mnum", perEduVO.Mobile_number);
                 cmd.Parameters.AddWithValue("@gen", perEduVO.Gender);
                 cmd.Parameters.AddWithValue("@dob", perEduVO.DateOfBirth);
                 cmd.Parameters.AddWithValue("@age", perEduVO.Age);
@@ -626,6 +624,89 @@ namespace NapelliServerFrameWork
                 Conn.Close();
             }
         }
+        public DataTable GetPackage()
+        {
+            MySqlConnection Conn = Connection.GetConnection();
+            try
+            {
+                Conn.Open();
+
+                string query = "select package_id, pack_name from package";
+                MySqlCommand cmd = new MySqlCommand(query, Conn);
+                MySqlDataReader reader = cmd.ExecuteReader();
+                DataTable dt = new DataTable();
+
+                dt.Load(reader);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                status.errcode = 1;
+                status.errmesg = ex.Message;
+                status.rowcount = -1;
+                return null;
+            }
+            finally
+            {
+                Conn.Close();
+            }
+        }
+        public DataTable GetPackageDetails(int pack_id)
+        {
+            MySqlConnection Conn = Connection.GetConnection();
+            try
+            {
+                Conn.Open();
+
+                string query = "select * from package where package_id = @pid";
+                MySqlCommand cmd = new MySqlCommand(query, Conn);
+                cmd.Parameters.AddWithValue("@pid", pack_id);
+                MySqlDataReader reader = cmd.ExecuteReader();
+                DataTable dt = new DataTable();
+
+                dt.Load(reader);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                status.errcode = 1;
+                status.errmesg = ex.Message;
+                status.rowcount = -1;
+                return null;
+            }
+            finally
+            {
+                Conn.Close();
+            }
+        }
+        public DataTable GetPackCoupCalculation(int pack_id, string coupCode)
+        {
+            MySqlConnection Conn = Connection.GetConnection();
+            try
+            {
+                Conn.Open();
+                string query = "select p.pack_price, c.coupon_offer, c.coupon_validfrom, c.coupon_validto from package p inner join cupons c on c.coupon_code = @ccode and p.package_id = @pid";
+                MySqlCommand cmd = new MySqlCommand(query, Conn);
+                cmd.Parameters.AddWithValue("@pid", pack_id);
+                cmd.Parameters.AddWithValue("@ccode", coupCode);
+                MySqlDataReader reader = cmd.ExecuteReader();
+                DataTable dt = new DataTable();
+
+                dt.Load(reader);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                status.errcode = 1;
+                status.errmesg = ex.Message;
+                status.rowcount = -1;
+                return null;
+            }
+            finally
+            {
+                Conn.Close();
+            }
+        }
         public DataTable GeneralSearch(string gender, int age_from, int age_to, int religion)
         {
             MySqlConnection Conn = Connection.GetConnection();
@@ -657,6 +738,303 @@ namespace NapelliServerFrameWork
                 Conn.Close();
             }
         }
+        public DataTable GetFamilyDetails(int user_id)
+        {
+            MySqlConnection Conn = Connection.GetConnection();
+            try
+            {
+                Conn.Open();
 
+                string query = "SELECT * FROM family_details where user_id = @uid";
+                MySqlCommand cmd = new MySqlCommand(query, Conn);
+                cmd.Parameters.AddWithValue("@uid", user_id);
+                MySqlDataReader reader = cmd.ExecuteReader();
+                DataTable dt = new DataTable();
+
+                dt.Load(reader);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                status.errcode = 1;
+                status.errmesg = ex.Message;
+                status.rowcount = -1;
+                return null;
+            }
+            finally
+            {
+                Conn.Close();
+            }
+        }
+        public DataTable GetPersonalEducationalDetails(int user_id)
+        {
+            MySqlConnection Conn = Connection.GetConnection();
+            try
+            {
+                Conn.Open();
+
+                string query = "SELECT * FROM personal_edu_details where user_id = @uid";
+                MySqlCommand cmd = new MySqlCommand(query, Conn);
+                cmd.Parameters.AddWithValue("@uid", user_id);
+                MySqlDataReader reader = cmd.ExecuteReader();
+                DataTable dt = new DataTable();
+
+                dt.Load(reader);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                status.errcode = 1;
+                status.errmesg = ex.Message;
+                status.rowcount = -1;
+                return null;
+            }
+            finally
+            {
+                Conn.Close();
+            }
+        }
+        public DataTable GetProfessionalDetails(int user_id)
+        {
+            MySqlConnection Conn = Connection.GetConnection();
+            try
+            {
+                Conn.Open();
+
+                string query = "SELECT * FROM professional_details where user_id = @uid";
+                MySqlCommand cmd = new MySqlCommand(query, Conn);
+                cmd.Parameters.AddWithValue("@uid", user_id);
+                MySqlDataReader reader = cmd.ExecuteReader();
+                DataTable dt = new DataTable();
+
+                dt.Load(reader);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                status.errcode = 1;
+                status.errmesg = ex.Message;
+                status.rowcount = -1;
+                return null;
+            }
+            finally
+            {
+                Conn.Close();
+            }
+        }
+        public DataTable GetPartnerPreferencesDetails(int user_id)
+        {
+            MySqlConnection Conn = Connection.GetConnection();
+            try
+            {
+                Conn.Open();
+
+                string query = "SELECT * FROM partner_preference where user_id = @uid";
+                MySqlCommand cmd = new MySqlCommand(query, Conn);
+                cmd.Parameters.AddWithValue("@uid", user_id);
+                MySqlDataReader reader = cmd.ExecuteReader();
+                DataTable dt = new DataTable();
+
+                dt.Load(reader);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                status.errcode = 1;
+                status.errmesg = ex.Message;
+                status.rowcount = -1;
+                return null;
+            }
+            finally
+            {
+                Conn.Close();
+            }
+        }
+        public DataTable GetPackageCuponsDetails(int user_id)
+        {
+            MySqlConnection Conn = Connection.GetConnection();
+            try
+            {
+                Conn.Open();
+
+                string query = "SELECT * FROM package_cupons where user_id = @uid";
+                MySqlCommand cmd = new MySqlCommand(query, Conn);
+                cmd.Parameters.AddWithValue("@uid", user_id);
+                MySqlDataReader reader = cmd.ExecuteReader();
+                DataTable dt = new DataTable();
+
+                dt.Load(reader);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                status.errcode = 1;
+                status.errmesg = ex.Message;
+                status.rowcount = -1;
+                return null;
+            }
+            finally
+            {
+                Conn.Close();
+            }
+        }
+        public string UpdateFamily(FamilyVO fVO)
+        {
+            MySqlConnection Conn = Connection.GetConnection();
+            try
+            {
+                Conn.Open();
+                string query = "update family_details set father_name = @fname, mother_name = @mname, brother = @bro, sister = @sis, family_type = @ftype where user_id = @uid";
+                MySqlCommand cmd = new MySqlCommand(query, Conn);
+                cmd.Parameters.AddWithValue("@fname", fVO.FatherName);
+                cmd.Parameters.AddWithValue("@mname", fVO.MotherName);
+                cmd.Parameters.AddWithValue("@bro", fVO.Brother);
+                cmd.Parameters.AddWithValue("@sis", fVO.Sister);
+                cmd.Parameters.AddWithValue("@ftype", fVO.FamilyType);
+                cmd.Parameters.AddWithValue("@uid", fVO.UserId);
+                Int32 row = cmd.ExecuteNonQuery();
+                if (row > 0)
+                    return "Updated";
+                else
+                    return "Not Updated";
+            }
+            catch (Exception ex)
+            {
+                status.errcode = 1;
+                status.errmesg = ex.Message;
+                status.rowcount = -1;
+                return null;
+            }
+            finally
+            {
+                Conn.Close();
+            }
+        }
+        public string UpdateProfessional(ProfessionalVo pVO)
+        {
+            MySqlConnection Conn = Connection.GetConnection();
+            try
+            {
+                Conn.Open();
+                string query = "update professional_details set employee_type = @etype, designation = @deg, company_name = @cname, salary_annum = @spanum, income = @income where user_id = @uid";
+                MySqlCommand cmd = new MySqlCommand(query, Conn);
+                cmd.Parameters.AddWithValue("@etype", pVO.EmployeeType);
+                cmd.Parameters.AddWithValue("@deg", pVO.Designation);
+                cmd.Parameters.AddWithValue("@cname", pVO.CompanyName);
+                cmd.Parameters.AddWithValue("@spanum", pVO.SalaryPerAnnum);
+                cmd.Parameters.AddWithValue("@income", pVO.Income);
+                cmd.Parameters.AddWithValue("@uid", pVO.UserId);
+                Int32 row = cmd.ExecuteNonQuery();
+                if (row > 0)
+                    return "Updated";
+                else
+                    return "Not Updated";
+            }
+            catch (Exception ex)
+            {
+                status.errcode = 1;
+                status.errmesg = ex.Message;
+                status.rowcount = -1;
+                return null;
+            }
+            finally
+            {
+                Conn.Close();
+            }
+        }
+        public string UpdatePartnerPreference(PartnerPrefVO ppVO)
+        {
+            MySqlConnection Conn = Connection.GetConnection();
+            try
+            {
+                Conn.Open();
+                string query = "update partner_preference set job_type = @jtype, qualification_id = @qalf, age_from = @agef, age_to = @aget, height_from = @higf, height_to = @higt, family_type = @ftype, country_id = @cid, physical_status = @psts, state_id = @sid, requirements = @req, city_id = @cityid, complexion = @com where user_id = @uid";
+                MySqlCommand cmd = new MySqlCommand(query, Conn);
+                cmd.Parameters.AddWithValue("@jtype", ppVO.JobType);
+                cmd.Parameters.AddWithValue("@qalf", ppVO.QualificationId);
+                cmd.Parameters.AddWithValue("@agef", ppVO.AgeForm);
+                cmd.Parameters.AddWithValue("@aget", ppVO.AgeTo);
+                cmd.Parameters.AddWithValue("@higf", ppVO.HeightFrom);
+                cmd.Parameters.AddWithValue("@higt", ppVO.HeightTo);
+                cmd.Parameters.AddWithValue("@ftype", ppVO.FamiltType);
+                cmd.Parameters.AddWithValue("@cid", ppVO.CountryId);
+                cmd.Parameters.AddWithValue("@psts", ppVO.PhysicalStatus);
+                cmd.Parameters.AddWithValue("@sid", ppVO.StateId);
+                cmd.Parameters.AddWithValue("@req", ppVO.Requirements);
+                cmd.Parameters.AddWithValue("@cityid", ppVO.CityId);
+                cmd.Parameters.AddWithValue("@com", ppVO.Complexion);
+                cmd.Parameters.AddWithValue("@uid", ppVO.UserId);
+                Int32 row = cmd.ExecuteNonQuery();
+                if (row > 0)
+                    return "Updated";
+                else
+                    return "Not Updated";
+            }
+            catch (Exception ex)
+            {
+                status.errcode = 1;
+                status.errmesg = ex.Message;
+                status.rowcount = -1;
+                return null;
+            }
+            finally
+            {
+                Conn.Close();
+            }
+        }
+        public string UpdatePersonalEdu(PersonalEduVO peVO)
+        {
+            MySqlConnection Conn = Connection.GetConnection();
+            try
+            {
+                Conn.Open();
+                string query = "update personal_edu_details set sur_name = @sname, full_name = @fname, gender = @gen, date_birth = @dob, age = @age, place_birth = @pob, sub_cast_id = @scid, birth_time = @btime, birth_name = @bname, marital_status = @msts, height = @hit, star = @star, padam = @padam, rasi = @rasi, caste_id = @cid, city = @city, physical_status = @psts, mother_tongue = @mtng, country = @con, state = @sta, complexion = @com, paternal_gotram = @pgot, maternal_gotram = @mgot, higher_education = @hedu, religion = @reg, qualification = @qlf, college = @clz where user_id = @uid";
+                MySqlCommand cmd = new MySqlCommand(query, Conn);
+                cmd.Parameters.AddWithValue("@sname", peVO.SurName);
+                cmd.Parameters.AddWithValue("@fname", peVO.FullName);
+                cmd.Parameters.AddWithValue("@gen", peVO.Gender);
+                cmd.Parameters.AddWithValue("@dob", peVO.DateOfBirth);
+                cmd.Parameters.AddWithValue("@age", peVO.Age);
+                cmd.Parameters.AddWithValue("@pob", peVO.PlaceOfBirth);
+                cmd.Parameters.AddWithValue("@scid", peVO.SubCastId);
+                cmd.Parameters.AddWithValue("@btime", peVO.BirthTime);
+                cmd.Parameters.AddWithValue("@bname", peVO.BirthName);
+                cmd.Parameters.AddWithValue("@msts", peVO.MaritalStatus);
+                cmd.Parameters.AddWithValue("@hit", peVO.Height);
+                cmd.Parameters.AddWithValue("@star", peVO.Star);
+                cmd.Parameters.AddWithValue("@padam", peVO.Padam);
+                cmd.Parameters.AddWithValue("@rasi", peVO.Rasi);
+                cmd.Parameters.AddWithValue("@cid", peVO.CasteId);
+                cmd.Parameters.AddWithValue("@city", peVO.City);
+                cmd.Parameters.AddWithValue("@psts", peVO.PhysicalStatus);
+                cmd.Parameters.AddWithValue("@mtng", peVO.MotherTounge);
+                cmd.Parameters.AddWithValue("@con", peVO.Country);
+                cmd.Parameters.AddWithValue("@sta", peVO.State);
+                cmd.Parameters.AddWithValue("@com", peVO.Complexion);
+                cmd.Parameters.AddWithValue("@pgot", peVO.PaternalGotram);
+                cmd.Parameters.AddWithValue("@mgot", peVO.MaternalGotram);
+                cmd.Parameters.AddWithValue("@hedu", peVO.HigherEducation);
+                cmd.Parameters.AddWithValue("@reg", peVO.Religion);
+                cmd.Parameters.AddWithValue("@qlf", peVO.Qualification);
+                cmd.Parameters.AddWithValue("@clz", peVO.College);
+                cmd.Parameters.AddWithValue("@uid", peVO.UserId);
+                Int32 row = cmd.ExecuteNonQuery();
+                if (row > 0)
+                    return "Updated";
+                else
+                    return "Not Updated";
+            }
+            catch (Exception ex)
+            {
+                status.errcode = 1;
+                status.errmesg = ex.Message;
+                status.rowcount = -1;
+                return null;
+            }
+            finally
+            {
+                Conn.Close();
+            }
+        }
     }
 }

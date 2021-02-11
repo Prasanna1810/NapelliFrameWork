@@ -9,3 +9,12 @@ C:\NapelliProject\NapelliFrameWorkProject\NapelliFrameWork\obj\Debug\netstandard
 C:\NapelliProject\NapelliFrameWorkProject\NapelliFrameWork\obj\Debug\netstandard2.0\NapelliFrameWork.dll
 C:\NapelliProject\NapelliFrameWorkProject\NapelliFrameWork\obj\Debug\netstandard2.0\NapelliFrameWork.pdb
 C:\NapelliProject\NapelliFrameWorkProject\NapelliFrameWork\obj\Debug\netstandard2.0\NapelliFrameWork.csprojAssemblyReference.cache
+D:\VSCode\Build\netstandard2.0\NapelliFrameWork.deps.json
+D:\VSCode\Build\netstandard2.0\NapelliFrameWork.dll
+D:\VSCode\Build\netstandard2.0\NapelliFrameWork.pdb
+D:\VSCode\NapelliFrameWork\NapelliFrameWork\obj\Debug\netstandard2.0\NapelliFrameWork.csprojAssemblyReference.cache
+D:\VSCode\NapelliFrameWork\NapelliFrameWork\obj\Debug\netstandard2.0\NapelliFrameWork.AssemblyInfoInputs.cache
+D:\VSCode\NapelliFrameWork\NapelliFrameWork\obj\Debug\netstandard2.0\NapelliFrameWork.AssemblyInfo.cs
+D:\VSCode\NapelliFrameWork\NapelliFrameWork\obj\Debug\netstandard2.0\NapelliFrameWork.csproj.CoreCompileInputs.cache
+D:\VSCode\NapelliFrameWork\NapelliFrameWork\obj\Debug\netstandard2.0\NapelliFrameWork.dll
+D:\VSCode\NapelliFrameWork\NapelliFrameWork\obj\Debug\netstandard2.0\NapelliFrameWork.pdb

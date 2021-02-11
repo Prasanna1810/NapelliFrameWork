@@ -11,8 +11,8 @@ namespace NapelliVO
         public int QualificationId { get; set; }
         public int AgeForm { get; set; }
         public int AgeTo { get; set; }
-        public int HeightFrom { get; set; }
-        public int HeightTo { get; set; }
+        public float HeightFrom { get; set; }
+        public float HeightTo { get; set; }
         public string FamiltType { get; set; }
         public int CountryId { get; set; }
         public string PhysicalStatus { get; set; }
