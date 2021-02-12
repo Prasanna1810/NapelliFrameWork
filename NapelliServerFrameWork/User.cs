@@ -215,8 +215,8 @@ namespace NapelliServerFrameWork
             try
             {
                 Conn.Open();
-                string query = "insert into personal_edu_details(user_id, sur_name, full_name, gender, date_birth, place_birth, birth_time, birth_name, marital_status, height, star, padam, rasi, caste_id, city, physical_status, mother_tongue, country, state, complexion, paternal_gotram, maternal_gotram, higher_education, sub_cast_id, religion, qualification, college) " +
-                    "values(@uid, @sname, @fname, @gen, @dob, @age, @pob, @bt, @bn, @ms, @hit, @star, @pad, @rasi, @cid, @city, @pgy, @mtou, @con, @sta, @com, @pg, @mg, @hedu, @scid, @reg, @qua, @col)";
+                string query = "insert into personal_edu_details(user_id, sur_name, full_name, gender, date_birth, place_birth, birth_time, birth_name, marital_status, height, star, padam, rasi, caste_id, city, physical_status, mother_tongue, country, state, complexion, paternal_gotram, maternal_gotram, sub_cast_id, religion, qualification, college) " +
+                    "values(@uid, @sname, @fname, @gen, @dob, @age, @pob, @bt, @bn, @ms, @hit, @star, @pad, @rasi, @cid, @city, @pgy, @mtou, @con, @sta, @com, @pg, @mg, @scid, @reg, @qua, @col)";
                 MySqlCommand cmd = new MySqlCommand(query, Conn);
                 cmd.Parameters.AddWithValue("@uid", perEduVO.UserId);
                 cmd.Parameters.AddWithValue("@sname", perEduVO.SurName);
@@ -241,7 +241,6 @@ namespace NapelliServerFrameWork
                 cmd.Parameters.AddWithValue("@com", perEduVO.Complexion);
                 cmd.Parameters.AddWithValue("@pg", perEduVO.PaternalGotram);
                 cmd.Parameters.AddWithValue("@mg", perEduVO.MaternalGotram);
-                cmd.Parameters.AddWithValue("@hedu", perEduVO.HigherEducation);
                 cmd.Parameters.AddWithValue("@scid", perEduVO.SubCastId);
                 cmd.Parameters.AddWithValue("@reg", perEduVO.Religion);
                 cmd.Parameters.AddWithValue("@qua", perEduVO.Qualification);
@@ -300,10 +299,10 @@ namespace NapelliServerFrameWork
             try
             {
                 Conn.Open();
-                string query = "insert into image(user_id, name, image1, image2, image3, image4, image5) values(@uid, @name, @img1, @img2, @img3, @img4, @img5)";
+                string query = "insert into image(user_id, profile_pic, image1, image2, image3, image4, image5) values(@uid, @name, @img1, @img2, @img3, @img4, @img5)";
                 MySqlCommand cmd = new MySqlCommand(query, Conn);
                 cmd.Parameters.AddWithValue("@uid", iVO.UserId);
-                cmd.Parameters.AddWithValue("@name", iVO.Name);
+                cmd.Parameters.AddWithValue("@name", iVO.ProfilePic);
                 cmd.Parameters.AddWithValue("@img1", iVO.Image1);
                 cmd.Parameters.AddWithValue("@img2", iVO.Image2);
                 cmd.Parameters.AddWithValue("@img3", iVO.Image3);
@@ -415,7 +414,7 @@ namespace NapelliServerFrameWork
             {
                 Conn.Open();
 
-                string query = "select * from master_desgination";
+                string query = "select * from master_designation";
                 MySqlCommand cmd = new MySqlCommand(query, Conn);
                 MySqlDataReader reader = cmd.ExecuteReader();
                 DataTable dt = new DataTable();
@@ -773,7 +772,7 @@ namespace NapelliServerFrameWork
             {
                 Conn.Open();
 
-                string query = "SELECT * FROM personal_edu_details where user_id = @uid";
+                string query = "select ped.sur_name, ped.full_name, ped.gender, ped.date_birth, ped.age, ped.place_birth, ped.birth_time, ped.birth_name, ped.marital_status, ped.height, ms.star_name, ped.padam, mr.rasi, mc.caste, cit.name as city, ped.physical_status, ml.language_name, con.name as country, st.name as state, msc.subcast_name as sub_caste, reg.religion_name, mq.quali_name as qualification, ped.complexion, ped. paternal_gotram, ped.maternal_gotram, ped.college from personal_edu_details ped inner join master_star ms on ms.star_id = ped.star inner join master_rasi mr on ped.rasi = mr.rasi_id inner join master_caste mc on ped.caste_id = mc.caste_id inner join master_cities cit on ped.city = cit.city_id inner join master_language ml on ped.mother_tongue = ml.lang_id inner join master_countries con on ped.country = con.coun_id inner join master_states st on ped.state = st.state_id inner join master_sub_caste msc on ped.sub_cast_id = msc.sub_caste_id inner join master_religion reg on ped.religion = reg.relig_id inner join master_qualification mq on ped.qualification = mq.quli_id where ped.user_id = @uid";
                 MySqlCommand cmd = new MySqlCommand(query, Conn);
                 cmd.Parameters.AddWithValue("@uid", user_id);
                 MySqlDataReader reader = cmd.ExecuteReader();
@@ -801,7 +800,7 @@ namespace NapelliServerFrameWork
             {
                 Conn.Open();
 
-                string query = "SELECT * FROM professional_details where user_id = @uid";
+                string query = "select pd.employee_type, md.designation_name, pd.company_name, pd.salary_annum, pd.income from professional_details pd inner join master_designation md on pd.designation = md.desi_id and pd.user_id = @uid";
                 MySqlCommand cmd = new MySqlCommand(query, Conn);
                 cmd.Parameters.AddWithValue("@uid", user_id);
                 MySqlDataReader reader = cmd.ExecuteReader();
@@ -829,7 +828,35 @@ namespace NapelliServerFrameWork
             {
                 Conn.Open();
 
-                string query = "SELECT * FROM partner_preference where user_id = @uid";
+                string query = "select pp.job_type, mq.quali_name, pp.age_from, pp.age_to, pp.height_from, pp.height_to, pp.family_type, pp.physical_status, pp.requirements, pp.complexion, cu.name as country_name, ms.name as state_name, mc.name as city_name from partner_preference pp inner join master_qualification mq on pp.qualification_id = mq.quli_id inner join master_countries cu on pp.country_id = cu.coun_id inner join master_states ms on pp.state_id = ms.state_id inner join master_cities mc on pp.city_id = mc.city_id and pp.user_id = @uid";
+                MySqlCommand cmd = new MySqlCommand(query, Conn);
+                cmd.Parameters.AddWithValue("@uid", user_id);
+                MySqlDataReader reader = cmd.ExecuteReader();
+                DataTable dt = new DataTable();
+
+                dt.Load(reader);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                status.errcode = 1;
+                status.errmesg = ex.Message;
+                status.rowcount = -1;
+                return null;
+            }
+            finally
+            {
+                Conn.Close();
+            }
+        }
+        public DataTable GetImages(int user_id)
+        {
+            MySqlConnection Conn = Connection.GetConnection();
+            try
+            {
+                Conn.Open();
+
+                string query = "SELECT * FROM image where user_id = @uid";
                 MySqlCommand cmd = new MySqlCommand(query, Conn);
                 cmd.Parameters.AddWithValue("@uid", user_id);
                 MySqlDataReader reader = cmd.ExecuteReader();
@@ -857,7 +884,7 @@ namespace NapelliServerFrameWork
             {
                 Conn.Open();
 
-                string query = "SELECT * FROM package_cupons where user_id = @uid";
+                string query = "select cupon_code, p.pack_name, p.covered, p.coupon from package_cupons pc inner join package p on pc.pack_id = p.package_id where pc.user_id = @uid";
                 MySqlCommand cmd = new MySqlCommand(query, Conn);
                 cmd.Parameters.AddWithValue("@uid", user_id);
                 MySqlDataReader reader = cmd.ExecuteReader();
@@ -1023,6 +1050,67 @@ namespace NapelliServerFrameWork
                     return "Updated";
                 else
                     return "Not Updated";
+            }
+            catch (Exception ex)
+            {
+                status.errcode = 1;
+                status.errmesg = ex.Message;
+                status.rowcount = -1;
+                return null;
+            }
+            finally
+            {
+                Conn.Close();
+            }
+        }
+        public string UpdateImage(ImageVO iVO)
+        {
+            MySqlConnection Conn = Connection.GetConnection();
+            try
+            {
+                Conn.Open();
+                string query = "update image set profile_pic = @pname, image1 = @i1, image2 = @i2, image3 = @i3, image4 = @i4, image5 = @i5 where user_id = @uid";
+                MySqlCommand cmd = new MySqlCommand(query, Conn);
+                cmd.Parameters.AddWithValue("@pname", iVO.ProfilePic);
+                cmd.Parameters.AddWithValue("@i1", iVO.Image1);
+                cmd.Parameters.AddWithValue("@i2", iVO.Image2);
+                cmd.Parameters.AddWithValue("@i3", iVO.Image3);
+                cmd.Parameters.AddWithValue("@i4", iVO.Image4);
+                cmd.Parameters.AddWithValue("@i5", iVO.Image5);
+                cmd.Parameters.AddWithValue("@uid", iVO.UserId);
+                Int32 row = cmd.ExecuteNonQuery();
+                if (row > 0)
+                    return "Updated";
+                else
+                    return "Not Updated";
+            }
+            catch (Exception ex)
+            {
+                status.errcode = 1;
+                status.errmesg = ex.Message;
+                status.rowcount = -1;
+                return null;
+            }
+            finally
+            {
+                Conn.Close();
+            }
+        }
+        public DataTable ViewProfile(int user_id)
+        {
+            MySqlConnection Conn = Connection.GetConnection();
+            try
+            {
+                Conn.Open();
+
+                string query = "select f.father_name, f.mother_name, f.brother, f.sister, f.family_type, pd.employee_type, md.designation_name, pd.company_name, pd.salary_annum, pd.income, pp.job_type, mq.quali_name, pp.age_from, pp.age_to, pp.height_from, pp.height_to, pp.family_type, pp.physical_status, pp.requirements, pp.complexion, cu.name as country_name, ms.name as state_name, cit1.name as city_name, ped.sur_name, ped.full_name, ped.gender, ped.date_birth, ped.age, ped.place_birth, ped.birth_time, ped.birth_name, ped.marital_status, ped.height, str.star_name, ped.padam, mr.rasi, mc.caste, cit.name as city, ped.physical_status, ml.language_name, con.name as country, st.name as state, msc.subcast_name as sub_caste, reg.religion_name, mq1.quali_name as qualification, ped.complexion, ped. paternal_gotram, ped.maternal_gotram, ped.college from family_details f, professional_details pd inner join master_designation md on pd.designation = md.desi_id, partner_preference pp inner join master_qualification mq on pp.qualification_id = mq.quli_id inner join master_countries cu on pp.country_id = cu.coun_id inner join master_states ms on pp.state_id = ms.state_id inner join master_cities cit1 on pp.city_id = cit1.city_id, personal_edu_details ped inner join master_star str on str.star_id = ped.star inner join master_rasi mr on ped.rasi = mr.rasi_id inner join master_caste mc on ped.caste_id = mc.caste_id inner join master_cities cit on ped.city = cit.city_id inner join master_language ml on ped.mother_tongue = ml.lang_id inner join master_countries con on ped.country = con.coun_id inner join master_states st on ped.state = st.state_id inner join master_sub_caste msc on ped.sub_cast_id = msc.sub_caste_id inner join master_religion reg on ped.religion = reg.relig_id inner join master_qualification mq1 on ped.qualification = mq1.quli_id where f.user_id = @uid and pd.user_id = @uid and ped.user_id = @uid and pp.user_id = @uid";
+                MySqlCommand cmd = new MySqlCommand(query, Conn);
+                cmd.Parameters.AddWithValue("@uid", user_id);
+                MySqlDataReader reader = cmd.ExecuteReader();
+                DataTable dt = new DataTable();
+
+                dt.Load(reader);
+                return dt;
             }
             catch (Exception ex)
             {
