@@ -14,17 +14,17 @@ namespace NapelliServerFrameWork
         {
             status = new StatusInfo(uinfo);
         }
-        public DataTable UserLogin(UserRegisterVO urVO)
+        public DataTable UserLogin(UserRegisterVO rVO)
         {
             MySqlConnection Conn = Connection.GetConnection();
             try
             {
                 Conn.Open();
 
-                string query = "select email_id from user_register where email_id = @email and password = @pwd";
+                string query = "select user_id, email_id from user_register where email_id = @email and password = @pwd";
                 MySqlCommand cmd = new MySqlCommand(query, Conn);
-                cmd.Parameters.AddWithValue("@email", urVO.Email_id);
-                cmd.Parameters.AddWithValue("@pwd", urVO.Password);
+                cmd.Parameters.AddWithValue("@email", rVO.Email_id);
+                cmd.Parameters.AddWithValue("@pwd", rVO.Password);
                 MySqlDataReader reader = cmd.ExecuteReader();
                 DataTable dt = new DataTable();
 
