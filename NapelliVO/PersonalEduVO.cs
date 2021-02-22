@@ -30,7 +30,6 @@ namespace NapelliVO
         public string Complexion { get; set; }
         public string PaternalGotram { get; set; }
         public string MaternalGotram { get; set; }
-        public string HigherEducation { get; set; }
         public int Religion { get; set; }
         public int Qualification { get; set; }
         public string College { get; set; }
