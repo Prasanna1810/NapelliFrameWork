@@ -3,6 +3,7 @@ using NapelliFrameWork;
 using NapelliVO;
 using System;
 using System.Data;
+using System.Data.SqlClient;
 using static NapelliFrameWork.StatusInfo;
 
 namespace NapelliServerFrameWork
@@ -106,25 +107,47 @@ namespace NapelliServerFrameWork
         public string FamilyDetails(FamilyVO famVO)
         {
             MySqlConnection Conn = Connection.GetConnection();
+            //Conn.setAutoCommit(false);
+            MySqlTransaction myTrans = null;
             try
-            {
+            {   
                 Conn.Open();
+                myTrans = Conn.BeginTransaction();
                 string query = "insert into family_details(user_id, father_name, mother_name, brother, sister, family_type) values(@uid, @fname, @mname, @bro, @sis, @ftype)";
                 MySqlCommand cmd = new MySqlCommand(query, Conn);
-                cmd.Parameters.AddWithValue("@uid", famVO.UserId);
-                cmd.Parameters.AddWithValue("@fname", famVO.FatherName);
-                cmd.Parameters.AddWithValue("@mname", famVO.MotherName);
-                cmd.Parameters.AddWithValue("@bro", famVO.Brother);
-                cmd.Parameters.AddWithValue("@sis", famVO.Sister);
-                cmd.Parameters.AddWithValue("@ftype", famVO.FamilyType);
+                cmd.Transaction = myTrans;
+                cmd.Parameters.AddWithValue("@uid", famVO.user_id);
+                cmd.Parameters.AddWithValue("@fname", famVO.father_name);
+                cmd.Parameters.AddWithValue("@mname", famVO.mother_name);
+                cmd.Parameters.AddWithValue("@bro", famVO.brother);
+                cmd.Parameters.AddWithValue("@sis", famVO.sister);
+                cmd.Parameters.AddWithValue("@ftype", famVO.family_type);
                 Int32 row = cmd.ExecuteNonQuery();
-                if (row > 0)
-                    return "Inserted";
-                else
+                if (row == 0)
+                {
+                    myTrans.Rollback();
                     return "Not Inserted";
+                }                    
+                if (row > 0)
+                {
+                    string query1 = "insert into user_info(user_id, form_name, is_filed) values(@uid, @fname, @field)";
+                    MySqlCommand cmd1 = new MySqlCommand(query1, Conn);
+                    cmd1.Parameters.AddWithValue("@uid", famVO.user_id);
+                    cmd1.Parameters.AddWithValue("@fname", "Family");
+                    cmd1.Parameters.AddWithValue("@field", "Y");
+                    Int32 row1 = cmd1.ExecuteNonQuery();
+                    myTrans.Commit();
+                    if (row == 0)
+                    {
+                        myTrans.Rollback();
+                        return "Not Inserted";
+                    }
+                }                
+                return "";               
             }
             catch (Exception ex)
-            {
+            { 
+                myTrans.Rollback();
                 status.errcode = 1;
                 status.errmesg = ex.Message;
                 status.rowcount = -1;
@@ -138,25 +161,46 @@ namespace NapelliServerFrameWork
         public string ProfessionalDetails(ProfessionalVo proVO)
         {
             MySqlConnection Conn = Connection.GetConnection();
+            MySqlTransaction myTrans = null;
             try
             {
                 Conn.Open();
+                myTrans = Conn.BeginTransaction();
                 string query = "insert into professional_details(user_id, employee_type, designation, company_name, salary_annum, income) values(@uid, @etype, @deg, @cname, @sal, @inc)";
                 MySqlCommand cmd = new MySqlCommand(query, Conn);
-                cmd.Parameters.AddWithValue("@uid", proVO.UserId);
-                cmd.Parameters.AddWithValue("@etype", proVO.EmployeeType);
-                cmd.Parameters.AddWithValue("@deg", proVO.Designation);
-                cmd.Parameters.AddWithValue("@cname", proVO.CompanyName);
-                cmd.Parameters.AddWithValue("@sal", proVO.SalaryPerAnnum);
-                cmd.Parameters.AddWithValue("@inc", proVO.Income);
+                cmd.Transaction = myTrans;
+                cmd.Parameters.AddWithValue("@uid", proVO.user_id);
+                cmd.Parameters.AddWithValue("@etype", proVO.employee_type);
+                cmd.Parameters.AddWithValue("@deg", proVO.designation);
+                cmd.Parameters.AddWithValue("@cname", proVO.company_name);
+                cmd.Parameters.AddWithValue("@sal", proVO.salary_annum);
+                cmd.Parameters.AddWithValue("@inc", proVO.income);
                 Int32 row = cmd.ExecuteNonQuery();
-                if (row > 0)
-                    return "Inserted";
-                else
+                if (row == 0)
+                {
+                    myTrans.Rollback();
                     return "Not Inserted";
+                }
+                if (row > 0)
+                {
+                    string query1 = "insert into user_info(user_id, form_name, is_filed) values(@uid, @fname, @field)";
+                    MySqlCommand cmd1 = new MySqlCommand(query1, Conn);
+                    cmd1.Parameters.AddWithValue("@uid", proVO.user_id);
+                    cmd1.Parameters.AddWithValue("@fname", "Professional");
+                    cmd1.Parameters.AddWithValue("@field", "Y");
+                    Int32 row1 = cmd1.ExecuteNonQuery();
+                    myTrans.Commit();
+                    if (row == 0)
+                    {
+                        myTrans.Rollback();
+                        return "Not Inserted";
+                    }
+                }
+                return "";
             }
             catch (Exception ex)
             {
+                myTrans.Rollback();
                 status.errcode = 1;
                 status.errmesg = ex.Message;
                 status.rowcount = -1;
@@ -170,35 +214,56 @@ namespace NapelliServerFrameWork
         public string PartnerPreference(PartnerPrefVO parVO)
         {
             MySqlConnection Conn = Connection.GetConnection();
+            MySqlTransaction myTrans = null;
             try
             {
                 Conn.Open();
+                myTrans = Conn.BeginTransaction();
                 string query = "insert into partner_preference" +
                     "(user_id, job_type, qualification_id, age_from, age_to, height_from, height_to, family_type, country_id, physical_status, state_id, requirements, city_id, complexion) " +
                     "values(@uid, @ejtype, @qua, @agef, @aget, @hitf, @hitto, @ftype, @counid, @phys, @sid, @req, @city, @com)";
                 MySqlCommand cmd = new MySqlCommand(query, Conn);
-                cmd.Parameters.AddWithValue("@uid", parVO.UserId);
-                cmd.Parameters.AddWithValue("@ejtype", parVO.JobType);
-                cmd.Parameters.AddWithValue("@qua", parVO.QualificationId);
-                cmd.Parameters.AddWithValue("@agef", parVO.AgeForm);
-                cmd.Parameters.AddWithValue("@aget", parVO.AgeTo);
-                cmd.Parameters.AddWithValue("@hitf", parVO.HeightFrom);
-                cmd.Parameters.AddWithValue("@hitto", parVO.HeightTo);
-                cmd.Parameters.AddWithValue("@ftype", parVO.FamiltType);
-                cmd.Parameters.AddWithValue("@counid", parVO.CountryId);
-                cmd.Parameters.AddWithValue("@phys", parVO.PhysicalStatus);
-                cmd.Parameters.AddWithValue("@sid", parVO.StateId);
-                cmd.Parameters.AddWithValue("@req", parVO.Requirements);
-                cmd.Parameters.AddWithValue("@city", parVO.CityId);
-                cmd.Parameters.AddWithValue("@com", parVO.Complexion);
+                cmd.Transaction = myTrans;
+                cmd.Parameters.AddWithValue("@uid", parVO.user_id);
+                cmd.Parameters.AddWithValue("@ejtype", parVO.job_type);
+                cmd.Parameters.AddWithValue("@qua", parVO.quailfication_id);
+                cmd.Parameters.AddWithValue("@agef", parVO.age_from);
+                cmd.Parameters.AddWithValue("@aget", parVO.age_to);
+                cmd.Parameters.AddWithValue("@hitf", parVO.height_from);
+                cmd.Parameters.AddWithValue("@hitto", parVO.height_to);
+                cmd.Parameters.AddWithValue("@ftype", parVO.family_type);
+                cmd.Parameters.AddWithValue("@counid", parVO.country_id);
+                cmd.Parameters.AddWithValue("@phys", parVO.physical_status);
+                cmd.Parameters.AddWithValue("@sid", parVO.state_id);
+                cmd.Parameters.AddWithValue("@req", parVO.requirements);
+                cmd.Parameters.AddWithValue("@city", parVO.city_id);
+                cmd.Parameters.AddWithValue("@com", parVO.complexion);
                 Int32 row = cmd.ExecuteNonQuery();
-                if (row > 0)
-                    return "Inserted";
-                else
+                if (row == 0)
+                {
+                    myTrans.Rollback();
                     return "Not Inserted";
+                }
+                if (row > 0)
+                {
+                    string query1 = "insert into user_info(user_id, form_name, is_filed) values(@uid, @fname, @field)";
+                    MySqlCommand cmd1 = new MySqlCommand(query1, Conn);
+                    cmd1.Parameters.AddWithValue("@uid", parVO.user_id);
+                    cmd1.Parameters.AddWithValue("@fname", "PartnerPreference");
+                    cmd1.Parameters.AddWithValue("@field", "Y");
+                    Int32 row1 = cmd1.ExecuteNonQuery();
+                    myTrans.Commit();
+                    if (row == 0)
+                    {
+                        myTrans.Rollback();
+                        return "Not Inserted";
+                    }
+                }
+                return "";
             }
             catch (Exception ex)
             {
+                myTrans.Rollback();
                 status.errcode = 1;
                 status.errmesg = ex.Message;
                 status.rowcount = -1;
@@ -212,47 +277,68 @@ namespace NapelliServerFrameWork
         public string PersonalEducation(PersonalEduVO perEduVO)
         {
             MySqlConnection Conn = Connection.GetConnection();
+            MySqlTransaction myTrans = null;
             try
             {
                 Conn.Open();
+                myTrans = Conn.BeginTransaction();
                 string query = "insert into personal_edu_details(user_id, sur_name, full_name, gender, date_birth, age, place_birth, birth_time, birth_name, marital_status, height, star, padam, rasi, caste_id, city, physical_status, mother_tongue, country, state, complexion, paternal_gotram, maternal_gotram, sub_cast_id, religion, qualification, college) " +
                     "values(@uid, @sname, @fname, @gen, @dob, @age, @pob, @bt, @bn, @ms, @hit, @star, @pad, @rasi, @cid, @city, @pgy, @mtou, @con, @sta, @com, @pg, @mg, @scid, @reg, @qua, @col)";
                 MySqlCommand cmd = new MySqlCommand(query, Conn);
-                cmd.Parameters.AddWithValue("@uid", perEduVO.UserId);
-                cmd.Parameters.AddWithValue("@sname", perEduVO.SurName);
-                cmd.Parameters.AddWithValue("@fname", perEduVO.FullName);
-                cmd.Parameters.AddWithValue("@gen", perEduVO.Gender);
-                cmd.Parameters.AddWithValue("@dob", perEduVO.DateOfBirth);
+                cmd.Transaction = myTrans;
+                cmd.Parameters.AddWithValue("@uid", perEduVO.user_id);
+                cmd.Parameters.AddWithValue("@sname", perEduVO.sur_name);
+                cmd.Parameters.AddWithValue("@fname", perEduVO.full_name);
+                cmd.Parameters.AddWithValue("@gen", perEduVO.gender);
+                cmd.Parameters.AddWithValue("@dob", perEduVO.date_birth);
                 cmd.Parameters.AddWithValue("@age", perEduVO.Age);
-                cmd.Parameters.AddWithValue("@pob", perEduVO.PlaceOfBirth);
-                cmd.Parameters.AddWithValue("@bt", perEduVO.BirthTime);
-                cmd.Parameters.AddWithValue("@bn", perEduVO.BirthName);
-                cmd.Parameters.AddWithValue("@ms", perEduVO.MaritalStatus);
-                cmd.Parameters.AddWithValue("@hit", perEduVO.Height);
-                cmd.Parameters.AddWithValue("@star", perEduVO.Star);
-                cmd.Parameters.AddWithValue("@pad", perEduVO.Padam);
-                cmd.Parameters.AddWithValue("@rasi", perEduVO.Rasi);
-                cmd.Parameters.AddWithValue("@cid", perEduVO.CasteId);
-                cmd.Parameters.AddWithValue("@city", perEduVO.City);
-                cmd.Parameters.AddWithValue("@pgy", perEduVO.PhysicalStatus);
-                cmd.Parameters.AddWithValue("@mtou", perEduVO.MotherTounge);
-                cmd.Parameters.AddWithValue("@con", perEduVO.Country);
-                cmd.Parameters.AddWithValue("@sta", perEduVO.State);
-                cmd.Parameters.AddWithValue("@com", perEduVO.Complexion);
-                cmd.Parameters.AddWithValue("@pg", perEduVO.PaternalGotram);
-                cmd.Parameters.AddWithValue("@mg", perEduVO.MaternalGotram);
+                cmd.Parameters.AddWithValue("@pob", perEduVO.place_birth);
+                cmd.Parameters.AddWithValue("@bt", perEduVO.birth_time);
+                cmd.Parameters.AddWithValue("@bn", perEduVO.birth_name);
+                cmd.Parameters.AddWithValue("@ms", perEduVO.marital_status);
+                cmd.Parameters.AddWithValue("@hit", perEduVO.height);
+                cmd.Parameters.AddWithValue("@star", perEduVO.star);
+                cmd.Parameters.AddWithValue("@pad", perEduVO.padam);
+                cmd.Parameters.AddWithValue("@rasi", perEduVO.rasi);
+                cmd.Parameters.AddWithValue("@cid", perEduVO.caste_id);
+                cmd.Parameters.AddWithValue("@city", perEduVO.city);
+                cmd.Parameters.AddWithValue("@pgy", perEduVO.physical_status);
+                cmd.Parameters.AddWithValue("@mtou", perEduVO.mother_tongue);
+                cmd.Parameters.AddWithValue("@con", perEduVO.country);
+                cmd.Parameters.AddWithValue("@sta", perEduVO.state);
+                cmd.Parameters.AddWithValue("@com", perEduVO.complexion);
+                cmd.Parameters.AddWithValue("@pg", perEduVO.paternal_gotram);
+                cmd.Parameters.AddWithValue("@mg", perEduVO.maternal_gotram);
                 cmd.Parameters.AddWithValue("@scid", perEduVO.SubCastId);
-                cmd.Parameters.AddWithValue("@reg", perEduVO.Religion);
-                cmd.Parameters.AddWithValue("@qua", perEduVO.Qualification);
-                cmd.Parameters.AddWithValue("@col", perEduVO.College);
+                cmd.Parameters.AddWithValue("@reg", perEduVO.religion);
+                cmd.Parameters.AddWithValue("@qua", perEduVO.qualification);
+                cmd.Parameters.AddWithValue("@col", perEduVO.college);
                 Int32 row = cmd.ExecuteNonQuery();
-                if (row > 0)
-                    return "Inserted";
-                else
+                if (row == 0)
+                {
+                    myTrans.Rollback();
                     return "Not Inserted";
+                }
+                if (row > 0)
+                {
+                    string query1 = "insert into user_info(user_id, form_name, is_filed) values(@uid, @fname, @field)";
+                    MySqlCommand cmd1 = new MySqlCommand(query1, Conn);
+                    cmd1.Parameters.AddWithValue("@uid", perEduVO.user_id);
+                    cmd1.Parameters.AddWithValue("@fname", "PersonalEducation");
+                    cmd1.Parameters.AddWithValue("@field", "Y");
+                    Int32 row1 = cmd1.ExecuteNonQuery();
+                    myTrans.Commit();
+                    if (row == 0)
+                    {
+                        myTrans.Rollback();
+                        return "Not Inserted";
+                    }
+                }
+                return "";
             }
             catch (Exception ex)
             {
+                myTrans.Rollback();
                 status.errcode = 1;
                 status.errmesg = ex.Message;
                 status.rowcount = -1;
@@ -296,26 +382,47 @@ namespace NapelliServerFrameWork
         public string InsertImage(ImageVO iVO)
         {
             MySqlConnection Conn = Connection.GetConnection();
+            MySqlTransaction myTrans = null;
             try
             {
                 Conn.Open();
+                myTrans = Conn.BeginTransaction();
                 string query = "insert into image(user_id, profile_pic, image1, image2, image3, image4, image5) values(@uid, @name, @img1, @img2, @img3, @img4, @img5)";
                 MySqlCommand cmd = new MySqlCommand(query, Conn);
-                cmd.Parameters.AddWithValue("@uid", iVO.UserId);
-                cmd.Parameters.AddWithValue("@name", iVO.ProfilePic);
-                cmd.Parameters.AddWithValue("@img1", iVO.Image1);
-                cmd.Parameters.AddWithValue("@img2", iVO.Image2);
-                cmd.Parameters.AddWithValue("@img3", iVO.Image3);
-                cmd.Parameters.AddWithValue("@img4", iVO.Image4);
-                cmd.Parameters.AddWithValue("@img5", iVO.Image5);
+                cmd.Transaction = myTrans;
+                cmd.Parameters.AddWithValue("@uid", iVO.user_id);
+                cmd.Parameters.AddWithValue("@name", iVO.profile_pic);
+                cmd.Parameters.AddWithValue("@img1", iVO.image1);
+                cmd.Parameters.AddWithValue("@img2", iVO.image2);
+                cmd.Parameters.AddWithValue("@img3", iVO.image3);
+                cmd.Parameters.AddWithValue("@img4", iVO.image4);
+                cmd.Parameters.AddWithValue("@img5", iVO.image5);
                 Int32 row = cmd.ExecuteNonQuery();
-                if (row > 0)
-                    return "Inserted";
-                else
+                if (row == 0)
+                {
+                    myTrans.Rollback();
                     return "Not Inserted";
+                }
+                if (row > 0)
+                {
+                    string query1 = "insert into user_info(user_id, form_name, is_filed) values(@uid, @fname, @field)";
+                    MySqlCommand cmd1 = new MySqlCommand(query1, Conn);
+                    cmd1.Parameters.AddWithValue("@uid", iVO.user_id);
+                    cmd1.Parameters.AddWithValue("@fname", "Image");
+                    cmd1.Parameters.AddWithValue("@field", "Y");
+                    Int32 row1 = cmd1.ExecuteNonQuery();
+                    myTrans.Commit();
+                    if (row == 0)
+                    {
+                        myTrans.Rollback();
+                        return "Not Inserted";
+                    }
+                }
+                return "";
             }
             catch (Exception ex)
             {
+                myTrans.Rollback();
                 status.errcode = 1;
                 status.errmesg = ex.Message;
                 status.rowcount = -1;
@@ -887,7 +994,7 @@ namespace NapelliServerFrameWork
             {
                 Conn.Open();
 
-                string query = "select cupon_code, p.pack_name, p.covered, p.coupon from package_cupons pc inner join package p on pc.pack_id = p.package_id where pc.user_id = @uid";
+                string query = "select pack_id, cupon_code, p.pack_name, p.covered, p.coupon from package_cupons pc inner join package p on pc.pack_id = p.package_id where pc.user_id = @uid";
                 MySqlCommand cmd = new MySqlCommand(query, Conn);
                 cmd.Parameters.AddWithValue("@uid", user_id);
                 MySqlDataReader reader = cmd.ExecuteReader();
@@ -916,12 +1023,12 @@ namespace NapelliServerFrameWork
                 Conn.Open();
                 string query = "update family_details set father_name = @fname, mother_name = @mname, brother = @bro, sister = @sis, family_type = @ftype where user_id = @uid";
                 MySqlCommand cmd = new MySqlCommand(query, Conn);
-                cmd.Parameters.AddWithValue("@fname", fVO.FatherName);
-                cmd.Parameters.AddWithValue("@mname", fVO.MotherName);
-                cmd.Parameters.AddWithValue("@bro", fVO.Brother);
-                cmd.Parameters.AddWithValue("@sis", fVO.Sister);
-                cmd.Parameters.AddWithValue("@ftype", fVO.FamilyType);
-                cmd.Parameters.AddWithValue("@uid", fVO.UserId);
+                cmd.Parameters.AddWithValue("@fname", fVO.father_name);
+                cmd.Parameters.AddWithValue("@mname", fVO.mother_name);
+                cmd.Parameters.AddWithValue("@bro", fVO.brother);
+                cmd.Parameters.AddWithValue("@sis", fVO.sister);
+                cmd.Parameters.AddWithValue("@ftype", fVO.family_type);
+                cmd.Parameters.AddWithValue("@uid", fVO.user_id);
                 Int32 row = cmd.ExecuteNonQuery();
                 if (row > 0)
                     return "Updated";
@@ -948,12 +1055,12 @@ namespace NapelliServerFrameWork
                 Conn.Open();
                 string query = "update professional_details set employee_type = @etype, designation = @deg, company_name = @cname, salary_annum = @spanum, income = @income where user_id = @uid";
                 MySqlCommand cmd = new MySqlCommand(query, Conn);
-                cmd.Parameters.AddWithValue("@etype", pVO.EmployeeType);
-                cmd.Parameters.AddWithValue("@deg", pVO.Designation);
-                cmd.Parameters.AddWithValue("@cname", pVO.CompanyName);
-                cmd.Parameters.AddWithValue("@spanum", pVO.SalaryPerAnnum);
-                cmd.Parameters.AddWithValue("@income", pVO.Income);
-                cmd.Parameters.AddWithValue("@uid", pVO.UserId);
+                cmd.Parameters.AddWithValue("@etype", pVO.employee_type);
+                cmd.Parameters.AddWithValue("@deg", pVO.designation);
+                cmd.Parameters.AddWithValue("@cname", pVO.company_name);
+                cmd.Parameters.AddWithValue("@spanum", pVO.salary_annum);
+                cmd.Parameters.AddWithValue("@income", pVO.income);
+                cmd.Parameters.AddWithValue("@uid", pVO.user_id);
                 Int32 row = cmd.ExecuteNonQuery();
                 if (row > 0)
                     return "Updated";
@@ -980,20 +1087,20 @@ namespace NapelliServerFrameWork
                 Conn.Open();
                 string query = "update partner_preference set job_type = @jtype, qualification_id = @qalf, age_from = @agef, age_to = @aget, height_from = @higf, height_to = @higt, family_type = @ftype, country_id = @cid, physical_status = @psts, state_id = @sid, requirements = @req, city_id = @cityid, complexion = @com where user_id = @uid";
                 MySqlCommand cmd = new MySqlCommand(query, Conn);
-                cmd.Parameters.AddWithValue("@jtype", ppVO.JobType);
-                cmd.Parameters.AddWithValue("@qalf", ppVO.QualificationId);
-                cmd.Parameters.AddWithValue("@agef", ppVO.AgeForm);
-                cmd.Parameters.AddWithValue("@aget", ppVO.AgeTo);
-                cmd.Parameters.AddWithValue("@higf", ppVO.HeightFrom);
-                cmd.Parameters.AddWithValue("@higt", ppVO.HeightTo);
-                cmd.Parameters.AddWithValue("@ftype", ppVO.FamiltType);
-                cmd.Parameters.AddWithValue("@cid", ppVO.CountryId);
-                cmd.Parameters.AddWithValue("@psts", ppVO.PhysicalStatus);
-                cmd.Parameters.AddWithValue("@sid", ppVO.StateId);
-                cmd.Parameters.AddWithValue("@req", ppVO.Requirements);
-                cmd.Parameters.AddWithValue("@cityid", ppVO.CityId);
-                cmd.Parameters.AddWithValue("@com", ppVO.Complexion);
-                cmd.Parameters.AddWithValue("@uid", ppVO.UserId);
+                cmd.Parameters.AddWithValue("@jtype", ppVO.job_type);
+                cmd.Parameters.AddWithValue("@qalf", ppVO.quailfication_id);
+                cmd.Parameters.AddWithValue("@agef", ppVO.age_from);
+                cmd.Parameters.AddWithValue("@aget", ppVO.age_to);
+                cmd.Parameters.AddWithValue("@higf", ppVO.height_from);
+                cmd.Parameters.AddWithValue("@higt", ppVO.height_to);
+                cmd.Parameters.AddWithValue("@ftype", ppVO.family_type);
+                cmd.Parameters.AddWithValue("@cid", ppVO.country_id);
+                cmd.Parameters.AddWithValue("@psts", ppVO.physical_status);
+                cmd.Parameters.AddWithValue("@sid", ppVO.state_id);
+                cmd.Parameters.AddWithValue("@req", ppVO.quailfication_id);
+                cmd.Parameters.AddWithValue("@cityid", ppVO.city_id);
+                cmd.Parameters.AddWithValue("@com", ppVO.complexion);
+                cmd.Parameters.AddWithValue("@uid", ppVO.user_id);
                 Int32 row = cmd.ExecuteNonQuery();
                 if (row > 0)
                     return "Updated";
@@ -1020,38 +1127,68 @@ namespace NapelliServerFrameWork
                 Conn.Open();
                 string query = "update personal_edu_details set sur_name = @sname, full_name = @fname, gender = @gen, date_birth = @dob, age = @age, place_birth = @pob, sub_cast_id = @scid, birth_time = @btime, birth_name = @bname, marital_status = @msts, height = @hit, star = @star, padam = @padam, rasi = @rasi, caste_id = @cid, city = @city, physical_status = @psts, mother_tongue = @mtng, country = @con, state = @sta, complexion = @com, paternal_gotram = @pgot, maternal_gotram = @mgot, religion = @reg, qualification = @qlf, college = @clz where user_id = @uid";
                 MySqlCommand cmd = new MySqlCommand(query, Conn);
-                cmd.Parameters.AddWithValue("@sname", peVO.SurName);
-                cmd.Parameters.AddWithValue("@fname", peVO.FullName);
-                cmd.Parameters.AddWithValue("@gen", peVO.Gender);
-                cmd.Parameters.AddWithValue("@dob", peVO.DateOfBirth);
+                cmd.Parameters.AddWithValue("@sname", peVO.sur_name);
+                cmd.Parameters.AddWithValue("@fname", peVO.full_name);
+                cmd.Parameters.AddWithValue("@gen", peVO.gender);
+                cmd.Parameters.AddWithValue("@dob", peVO.date_birth);
                 cmd.Parameters.AddWithValue("@age", peVO.Age);
-                cmd.Parameters.AddWithValue("@pob", peVO.PlaceOfBirth);
+                cmd.Parameters.AddWithValue("@pob", peVO.place_birth);
                 cmd.Parameters.AddWithValue("@scid", peVO.SubCastId);
-                cmd.Parameters.AddWithValue("@btime", peVO.BirthTime);
-                cmd.Parameters.AddWithValue("@bname", peVO.BirthName);
-                cmd.Parameters.AddWithValue("@msts", peVO.MaritalStatus);
-                cmd.Parameters.AddWithValue("@hit", peVO.Height);
-                cmd.Parameters.AddWithValue("@star", peVO.Star);
-                cmd.Parameters.AddWithValue("@padam", peVO.Padam);
-                cmd.Parameters.AddWithValue("@rasi", peVO.Rasi);
-                cmd.Parameters.AddWithValue("@cid", peVO.CasteId);
-                cmd.Parameters.AddWithValue("@city", peVO.City);
-                cmd.Parameters.AddWithValue("@psts", peVO.PhysicalStatus);
-                cmd.Parameters.AddWithValue("@mtng", peVO.MotherTounge);
-                cmd.Parameters.AddWithValue("@con", peVO.Country);
-                cmd.Parameters.AddWithValue("@sta", peVO.State);
-                cmd.Parameters.AddWithValue("@com", peVO.Complexion);
-                cmd.Parameters.AddWithValue("@pgot", peVO.PaternalGotram);
-                cmd.Parameters.AddWithValue("@mgot", peVO.MaternalGotram);
-                cmd.Parameters.AddWithValue("@reg", peVO.Religion);
-                cmd.Parameters.AddWithValue("@qlf", peVO.Qualification);
-                cmd.Parameters.AddWithValue("@clz", peVO.College);
-                cmd.Parameters.AddWithValue("@uid", peVO.UserId);
+                cmd.Parameters.AddWithValue("@btime", peVO.birth_time);
+                cmd.Parameters.AddWithValue("@bname", peVO.birth_name);
+                cmd.Parameters.AddWithValue("@msts", peVO.marital_status);
+                cmd.Parameters.AddWithValue("@hit", peVO.height);
+                cmd.Parameters.AddWithValue("@star", peVO.star);
+                cmd.Parameters.AddWithValue("@padam", peVO.padam);
+                cmd.Parameters.AddWithValue("@rasi", peVO.rasi);
+                cmd.Parameters.AddWithValue("@cid", peVO.caste_id);
+                cmd.Parameters.AddWithValue("@city", peVO.city);
+                cmd.Parameters.AddWithValue("@psts", peVO.physical_status);
+                cmd.Parameters.AddWithValue("@mtng", peVO.mother_tongue);
+                cmd.Parameters.AddWithValue("@con", peVO.country);
+                cmd.Parameters.AddWithValue("@sta", peVO.state);
+                cmd.Parameters.AddWithValue("@com", peVO.complexion);
+                cmd.Parameters.AddWithValue("@pgot", peVO.paternal_gotram);
+                cmd.Parameters.AddWithValue("@mgot", peVO.maternal_gotram);
+                cmd.Parameters.AddWithValue("@reg", peVO.religion);
+                cmd.Parameters.AddWithValue("@qlf", peVO.qualification);
+                cmd.Parameters.AddWithValue("@clz", peVO.college);
+                cmd.Parameters.AddWithValue("@uid", peVO.user_id);
                 Int32 row = cmd.ExecuteNonQuery();
                 if (row > 0)
                     return "Updated";
                 else
                     return "Not Updated";
+            }
+            catch (Exception ex)
+            {
+                status.errcode = 1;
+                status.errmesg = ex.Message;
+                status.rowcount = -1;
+                return null;
+            }
+            finally
+            {
+                Conn.Close();
+            }
+        }
+        public DataTable UpdatePackageCupon(int user_id, int package_id, string cupon_code)
+        {
+            MySqlConnection Conn = Connection.GetConnection();
+            try
+            {
+                Conn.Open();
+                string query = "update_package_cupon";
+                MySqlCommand cmd = new MySqlCommand(query, Conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@old_user_id", user_id);
+                cmd.Parameters.AddWithValue("@package_id", package_id);
+                cmd.Parameters.AddWithValue("@cupon_code", cupon_code);
+                MySqlDataReader reader = cmd.ExecuteReader();
+                DataTable dt = new DataTable();
+
+                dt.Load(reader);
+                return dt;
             }
             catch (Exception ex)
             {
@@ -1073,13 +1210,13 @@ namespace NapelliServerFrameWork
                 Conn.Open();
                 string query = "update image set profile_pic = @pname, image1 = @i1, image2 = @i2, image3 = @i3, image4 = @i4, image5 = @i5 where user_id = @uid";
                 MySqlCommand cmd = new MySqlCommand(query, Conn);
-                cmd.Parameters.AddWithValue("@pname", iVO.ProfilePic);
-                cmd.Parameters.AddWithValue("@i1", iVO.Image1);
-                cmd.Parameters.AddWithValue("@i2", iVO.Image2);
-                cmd.Parameters.AddWithValue("@i3", iVO.Image3);
-                cmd.Parameters.AddWithValue("@i4", iVO.Image4);
-                cmd.Parameters.AddWithValue("@i5", iVO.Image5);
-                cmd.Parameters.AddWithValue("@uid", iVO.UserId);
+                cmd.Parameters.AddWithValue("@pname", iVO.profile_pic);
+                cmd.Parameters.AddWithValue("@i1", iVO.image1);
+                cmd.Parameters.AddWithValue("@i2", iVO.image2);
+                cmd.Parameters.AddWithValue("@i3", iVO.image3);
+                cmd.Parameters.AddWithValue("@i4", iVO.image4);
+                cmd.Parameters.AddWithValue("@i5", iVO.image5);
+                cmd.Parameters.AddWithValue("@uid", iVO.user_id);
                 Int32 row = cmd.ExecuteNonQuery();
                 if (row > 0)
                     return "Updated";
@@ -1191,6 +1328,34 @@ namespace NapelliServerFrameWork
                 Conn.Open();
 
                 string query = "select * from partner_preference where user_id = @uid"; 
+                MySqlCommand cmd = new MySqlCommand(query, Conn);
+                cmd.Parameters.AddWithValue("@uid", user_id);
+                MySqlDataReader reader = cmd.ExecuteReader();
+                DataTable dt = new DataTable();
+
+                dt.Load(reader);
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                status.errcode = 1;
+                status.errmesg = ex.Message;
+                status.rowcount = -1;
+                return null;
+            }
+            finally
+            {
+                Conn.Close();
+            }
+        }
+        public DataTable GetUserInfo(int user_id)
+        {
+            MySqlConnection Conn = Connection.GetConnection();
+            try
+            {
+                Conn.Open();
+
+                string query = "select form_name from user_info where user_id = @uid";
                 MySqlCommand cmd = new MySqlCommand(query, Conn);
                 cmd.Parameters.AddWithValue("@uid", user_id);
                 MySqlDataReader reader = cmd.ExecuteReader();
